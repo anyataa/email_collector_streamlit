@@ -1,0 +1,3 @@
+SKU, Current Price, Sales, Return, Loss, Stock
+2, 14.99, 15, 1, 0, 75
+2, 4.97, 4, 80, 2, 40
