@@ -76,7 +76,7 @@ add_selectbox = st.sidebar.selectbox(
 
 # getting path of the file because st.file_uploader does not return path 
 st.title("Get Path")
-def file_selector(folder_path='.'):
+def file_selector(folder_path='./data'):
     filenames = os.listdir(folder_path)
     selected_filename = st.selectbox('Select a file', filenames)
     if selected_filename is not None:
