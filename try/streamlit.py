@@ -20,7 +20,7 @@ def load_lottieurl(url: str):
 
 lottie_book = load_lottieurl("https://assets1.lottiefiles.com/packages/lf20_8vcvc00i.json")
 st_lottie(lottie_book, speed=1, height=200, key="initial")
-st.title("Email Report Storage")
+st.title("Email Report Data Visualization")
 st.subheader("Besco in the UK")
 ######################################################
 #################### WEB HEADING #####################
@@ -88,16 +88,17 @@ def generate_table(df):
 ######################################################
 ################## VISUALIZATION #####################
 ######################################################
-row1_1, row1_2 = st.columns(2, gap="large")
+files_gcs = list_blobs(bucket_name=bucket_name)
+selected_file = st.selectbox(
+     "Choose report to analyze and visualize",
+     (files_gcs)
+     )
+content = read_file(bucket_name, selected_file)
+df = pd.read_csv(content, sep=",")
 
+row1_1, row1_2 = st.columns(2, gap="large")
 with row1_1:
-    files_gcs = list_blobs(bucket_name=bucket_name)
-    selected_file = st.selectbox(
-    "Desired data for monitoring and visualizing",
-    (files_gcs)
-    )
-    content = read_file(bucket_name, selected_file)
-    df = pd.read_csv(content, sep=",")
+    st.subheader("Data SKU overview")
     generate_table(df)
 
 with row1_2:
@@ -107,17 +108,20 @@ with row1_2:
 
 row2_1, row2_2 = st.columns(2, gap="large")
 with row2_1:
-    st.subheader("Total Revenue")
-    analyse_file = list_blobs(bucket_name=bucket_name)
-    analyse_visual = st.selectbox(
-        "Desired data for monitoring and visualizing", (files_gcs), key=1
-        )
-    loss_df = df
-    st.write(loss_df)
-
+    st.subheader("Total Revenue per SKU")
+    revenue_df = pd.DataFrame({"SKU": (df["SKU"]),"Total Revenue": (df["Stock"] * df["Current Price"])})
+    st.write(revenue_df)
+ 
 with row2_2:
-    st.subheader("Later")
-    # st.bar_chart(df)
+    fig = px.bar(
+       revenue_df,
+        x="SKU",
+        y="Total Revenue",
+        title="Revenue Visualization (in Pounds)",
+        color_discrete_sequence=["#9EE6CF"]
+        )
+    st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
 
 ######################################################
 ################## VISUALIZATION #####################
