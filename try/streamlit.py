@@ -5,39 +5,56 @@ from google.oauth2 import service_account
 from google.cloud import storage
 from io import StringIO
 import plotly.express as px
-import os
+import requests
+from streamlit_lottie import st_lottie
 
 
+######################################################
+#################### WEB HEADING #####################
+######################################################
+def load_lottieurl(url: str):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
+
+lottie_book = load_lottieurl("https://assets1.lottiefiles.com/packages/lf20_8vcvc00i.json")
+st_lottie(lottie_book, speed=1, height=200, key="initial")
 st.title("Email Report Storage")
+st.subheader("Besco in the UK")
+######################################################
+#################### WEB HEADING #####################
+######################################################
 
 
-# Google Cloud Storage (GCS)
-# Create API client: set connection and provide key credential to form the connection to GCS
-# Bucket name: the name of folder/bucket to store all the uploaded files
-
+######################################################
+############# Google Cloud Storage (GCS) #############
+######################################################
 # Notes: 
 # All code with comment line starts with GCP would perform certain CRUD action 
-# This covers:
-# GCP - Read (Retrieve)
-# GCP - Create (Upload)
-
-
-# Create API client
+# This covers: Retrive and connection
+# GCP - Create API client
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"]
 )
 client = storage.Client(credentials=credentials)
-# Bucket name
+# GCP - Bucket name
 bucket_name = "db_email_reports_anya"
-
+######################################################
+############# Google Cloud Storage (GCS) #############
+######################################################
 
 def list_blobs(bucket_name):
-    """Lists all the blobs in the bucket."""
+    """
+    Action : List all the blobs in the bucket
+    Parameter: 
+        1. bucker_name: Bucket name in GCP which files stored [string]
+    """
 
-    # client.list_blobs : get all files inside the bucket
+    # GCP - client.list_blobs : get all files inside the bucket
     blobs = client.list_blobs(bucket_name)
 
-    # The call return 'Iterator'. Thus, we implement for loop to generate list to be consumed by st.selectbox
+    # The afforementioned function return 'Iterator'. Thus, we implement for loop to generate list to be consumed by st.selectbox
     file_list = []
     for blob in blobs:
         file_list.append(blob.name)
@@ -45,10 +62,14 @@ def list_blobs(bucket_name):
     dataframe_file_list = pd.DataFrame(file_list, columns= ['file_name'])
     return dataframe_file_list
 
-# SIDE BAR
+######################################################
+####################### SIDE BAR #####################
+######################################################
 # Dropdown
 st.sidebar.title("Later")
-# SIDE BAR DONE
+######################################################
+####################### SIDE BAR #####################
+######################################################
 
 # GCP - Retrieve file contents
 # Uses st.experimental_memo to only rerun when the query changes or after 10 min.
@@ -64,7 +85,9 @@ def read_file(bucket_name, file_path):
 def generate_table(df):
     st.write(df)
 
-# Visualization structure
+######################################################
+################## VISUALIZATION #####################
+######################################################
 row1_1, row1_2 = st.columns(2, gap="large")
 
 with row1_1:
@@ -78,11 +101,13 @@ with row1_1:
     generate_table(df)
 
 with row1_2:
-    generate_table(df)
+    st.subheader("SKU quantity-related data")
+    quantity_data = df[["Stock", "Loss", "Return"]]
+    st.bar_chart(quantity_data)
 
 row2_1, row2_2 = st.columns(2, gap="large")
 with row2_1:
-    st.subheader("Total Return Over the SKU")
+    st.subheader("Total Revenue")
     analyse_file = list_blobs(bucket_name=bucket_name)
     analyse_visual = st.selectbox(
         "Desired data for monitoring and visualizing", (files_gcs), key=1
@@ -91,8 +116,12 @@ with row2_1:
     st.write(loss_df)
 
 with row2_2:
-    st.subheader("Non- determined")
-    st.bar_chart(df)
+    st.subheader("Later")
+    # st.bar_chart(df)
+
+######################################################
+################## VISUALIZATION #####################
+######################################################
 
 # Upload and visualize
 uploaded_file = st.file_uploader("Choose a file")
