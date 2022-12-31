@@ -94,7 +94,7 @@ selected_file = st.selectbox(
      (files_gcs)
      )
 content = read_file(bucket_name, selected_file)
-df = pd.read_csv(content, sep=",")
+df = pd.read_excel(content, sep=",")
 
 row1_1, row1_2 = st.columns(2, gap="large")
 with row1_1:
