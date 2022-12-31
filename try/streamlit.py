@@ -6,8 +6,11 @@ from google.cloud import storage
 from io import StringIO
 import plotly.express as px
 import requests
+import os
 from streamlit_lottie import st_lottie
 
+# CONVERT DATA
+file_ext = os.path.splitext(uploaded_file.filename)[1]
 
 ######################################################
 #################### WEB HEADING #####################
@@ -85,6 +88,8 @@ def read_file(bucket_name, file_path):
 def generate_table(df):
     st.write(df)
 
+
+
 ######################################################
 ################## VISUALIZATION #####################
 ######################################################
@@ -94,7 +99,7 @@ selected_file = st.selectbox(
      (files_gcs)
      )
 content = read_file(bucket_name, selected_file)
-df = pd.read_excel(content, sep=",")
+df = pd.read_csv(content, sep=",")
 
 row1_1, row1_2 = st.columns(2, gap="large")
 with row1_1:
