@@ -109,7 +109,7 @@ with row1_2:
 row2_1, row2_2 = st.columns(2, gap="large")
 with row2_1:
     st.subheader("Total Revenue per SKU")
-    revenue_df = pd.DataFrame({"SKU": (df["SKU"]),"Total Revenue": (df["Stock"] * df["Current Price"])})
+    revenue_df = pd.DataFrame({"SKU": (df["SKU"]),"Total Revenue": (df["Sales"] * df["Current Price"])})
     st.write(revenue_df)
  
 with row2_2:
