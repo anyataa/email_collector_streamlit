@@ -9,8 +9,6 @@ import requests
 import os
 from streamlit_lottie import st_lottie
 
-# CONVERT DATA
-file_ext = os.path.splitext(uploaded_file.filename)[1]
 
 ######################################################
 #################### WEB HEADING #####################
@@ -79,16 +77,16 @@ st.sidebar.title("Later")
 @st.experimental_memo(ttl=600)
 def read_file(bucket_name, file_path):
     bucket = client.bucket(bucket_name)
-    content = bucket.blob(file_path).download_as_string().decode("utf-8")
-    string_format = StringIO(content)
-    return string_format
-
+    # CONVERT DATA
+    file_ext = os.path.splitext(selected_file)[1]
+    if file_ext==".csv":
+        content = bucket.blob(file_path).download_as_string().decode("utf-8")
+        string_format = StringIO(content)
+        return string_format
 
 # Function: Generate Table 
 def generate_table(df):
     st.write(df)
-
-
 
 ######################################################
 ################## VISUALIZATION #####################
@@ -131,6 +129,9 @@ with row2_2:
 ######################################################
 ################## VISUALIZATION #####################
 ######################################################
+
+
+
 
 # Upload and visualize
 uploaded_file = st.file_uploader("Choose a file")
