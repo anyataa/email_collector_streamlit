@@ -23,7 +23,7 @@ lottie_book = load_lottieurl("https://assets1.lottiefiles.com/packages/lf20_8vcv
 st_lottie(lottie_book, speed=1, height=200, key="initial")
 st.title("Email Report Data Visualization")
 st.subheader("Besco in the UK")
-######################################################
+####################### END #########################
 #################### WEB HEADING #####################
 ######################################################
 
@@ -41,7 +41,7 @@ credentials = service_account.Credentials.from_service_account_info(
 client = storage.Client(credentials=credentials)
 # GCP - Bucket name
 bucket_name = "db_email_reports_anya"
-######################################################
+####################### END #########################
 ############# Google Cloud Storage (GCS) #############
 ######################################################
 
@@ -68,8 +68,13 @@ def list_blobs(bucket_name):
 ######################################################
 # Dropdown
 st.sidebar.title("Later")
-######################################################
+####################### END #########################
 ####################### SIDE BAR #####################
+######################################################
+
+
+######################################################
+################## VISUALIZATION #####################
 ######################################################
 
 # GCP - Retrieve file contents
@@ -87,10 +92,6 @@ def read_file(bucket_name, file_path):
 # Function: Generate Table 
 def generate_table(df):
     st.write(df)
-
-######################################################
-################## VISUALIZATION #####################
-######################################################
 files_gcs = list_blobs(bucket_name=bucket_name)
 selected_file = st.selectbox(
      "Choose report to analyze and visualize",
@@ -124,35 +125,60 @@ with row2_2:
         color_discrete_sequence=["#9EE6CF"]
         )
     st.plotly_chart(fig, theme="streamlit", use_container_width=True)
-
-
-######################################################
+####################### END #########################
 ################## VISUALIZATION #####################
 ######################################################
 
 
+######################################################
+#############  UPLOADER AND CONVERTER ################
+######################################################
+def create_download_button(input_file, button_label):
+    st.download_button(
+            label=button_label,
+            data=input_file,
+            file_name='GoodSale/converted_df.csv',
+            mime='text/csv'
+        )
 
-
-# Upload and visualize
 uploaded_file = st.file_uploader("Choose a file")
+
 if uploaded_file is not None:
     # Can be used wherever a "file-like" object is accepted:
-    st.title("Uploaded File Shown Below")
     file_extension = os.path.splitext(uploaded_file.name)[1]
-    st.title(uploaded_file.name + file_extension)
-    dataframe = pd.read_csv(uploaded_file)
-    st.write(dataframe)
-    
-    
-    # Convert .excel file
-    # excel_file = pd.read_excel('mock.xls')
-    # excel_file.to_csv('converted_file_xls.csv',
-    #                     index=None,
-    #                     header=True)
+   
+    # Handling excel file to be converted 
+    if file_extension == ".xlsx":
+        # Pandas need additional engine due to its incapability to read excell without openpyxl support
+        # More details: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_excel.html
+        excel_file = pd.read_excel(uploaded_file, engine='openpyxl')
+        st.write(excel_file)
+        converted_to_csv = excel_file.to_csv(
+                            index=None,
+                            header=True)
+            
+        st.subheader(f"Converter from {file_extension} to CSV")
+        create_download_button(converted_to_csv, "Download CSV file from Excel")
     
     # Convert .txt file
-    # text_file = pd.read_csv('mock.txt')
-    # text_file.to_csv('converted_file_txt.csv',
-    #                         index = None,
-    #                         header = True)
+    elif file_extension == ".txt":
+        text_file = pd.read_csv(uploaded_file)
+        st.write(text_file)
+        converted_to_csv = text_file.to_csv(
+                            index=None,
+                            header=True)
 
+        st.subheader(f"Converter from {file_extension} to CSV")
+        create_download_button(converted_to_csv, "Download CSV file from Text file")
+
+    elif file_extension == ".csv":
+        st.title(uploaded_file.name + file_extension)
+        dataframe = pd.read_csv(uploaded_file)
+        st.write(dataframe)
+    
+    else:
+        st.title("File format is not supported")
+        st.subheader("Please input supported file extension (.xlsx or .csv or .txt)")
+####################### END #########################
+#############  UPLOADER AND CONVERTER ################
+######################################################
