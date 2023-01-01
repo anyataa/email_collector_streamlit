@@ -138,6 +138,21 @@ uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
     # Can be used wherever a "file-like" object is accepted:
     st.title("Uploaded File Shown Below")
+    file_extension = os.path.splitext(uploaded_file.name)[1]
+    st.title(uploaded_file.name + file_extension)
     dataframe = pd.read_csv(uploaded_file)
     st.write(dataframe)
     
+    
+    # Convert .excel file
+    # excel_file = pd.read_excel('mock.xls')
+    # excel_file.to_csv('converted_file_xls.csv',
+    #                     index=None,
+    #                     header=True)
+    
+    # Convert .txt file
+    # text_file = pd.read_csv('mock.txt')
+    # text_file.to_csv('converted_file_txt.csv',
+    #                         index = None,
+    #                         header = True)
+
