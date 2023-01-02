@@ -89,12 +89,20 @@ st.sidebar.subheader("2. Upload -> Convert -> Download")
 ################## VISUALIZATION #####################
 ######################################################
 
-# GCP - Retrieve file contents
+# GCP 
 # Uses st.experimental_memo to only rerun when the query changes or after 10 min.
 @st.experimental_memo(ttl=600)
 def read_file(bucket_name, file_path):
+    """
+    Action : Retrieve file from GCP
+    Parameter: 
+    1. bucket_name: [string] name of GCP bucket
+    2. file_path: [string] name of the file in GCP
+    """
+
     bucket = client.bucket(bucket_name)
-    # CONVERT DATA
+    
+    # Convert data
     file_ext = os.path.splitext(selected_file)[1]
     if file_ext==".csv":
         content = bucket.blob(file_path).download_as_string().decode("utf-8")
@@ -102,8 +110,14 @@ def read_file(bucket_name, file_path):
         return string_format
 
 st.title("Visualization and Download Report")
-# Function: Generate Table 
+
 def generate_table(df):
+    """
+    Action : Generate table
+    Parameter: 
+    1. df: [csv format] data frame
+    """
+
     st.write(df)
 files_gcs = list_blobs(bucket_name=bucket_name)
 selected_file = st.selectbox(
@@ -148,6 +162,9 @@ with row2_2:
 ######################################################
 st.title("Upload -> Convert -> Download")
 def create_download_button(input_file, button_label):
+    '''
+    
+    '''
     st.download_button(
             label=button_label,
             data=input_file,
@@ -161,7 +178,7 @@ if uploaded_file is not None:
     # Can be used wherever a "file-like" object is accepted:
     file_extension = os.path.splitext(uploaded_file.name)[1]
    
-    # Handling excel file to be converted 
+    # Convert .xlsx file 
     if file_extension == ".xlsx":
         # Pandas need additional engine due to its incapability to read excell without openpyxl support
         # More details: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_excel.html
@@ -185,11 +202,13 @@ if uploaded_file is not None:
         st.subheader(f"Converter from {file_extension} to CSV")
         create_download_button(converted_to_csv, "Download CSV file from Text file")
 
+    # Read .csv file
     elif file_extension == ".csv":
         st.title(uploaded_file.name + file_extension)
         dataframe = pd.read_csv(uploaded_file)
         st.write(dataframe)
     
+    # Ask users to input supported file type
     else:
         st.title("File format is not supported")
         st.subheader("Please input supported file extension (.xlsx or .csv or .txt)")
