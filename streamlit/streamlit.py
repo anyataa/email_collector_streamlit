@@ -10,10 +10,13 @@ import os
 from streamlit_lottie import st_lottie
 
 
-##################### NOTE ###########################
-#####  This Project can be accessed online here: #####
-### https://email-collector-goodsale.streamlit.app/ ##
-######################################################
+##################### NOTE #############################
+#####  This Project can be accessed online here: #######
+### https://email-collector-goodsale.streamlit.app/ ####
+############### Head over to this link #################
+#######  To clone the FULL project repository: #########
+# https://github.com/anyataa/email_collector_streamlit #
+########################################################
 
 ######################################################
 #################### WEB HEADING #####################
