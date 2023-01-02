@@ -78,7 +78,6 @@ def list_blobs(bucket_name):
 ######################################################
 # Dropdown
 st.sidebar.title("GoodSale Interactive Dashboard")
-st.sidebar.subheader("This dashboard consist of 2 main features:")
 st.sidebar.subheader("1. Visualization")
 st.sidebar.subheader("2. Upload -> Convert -> Download")
 ####################### END #########################
