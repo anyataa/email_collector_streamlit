@@ -14,9 +14,14 @@ The source code of this project is available online on my [github](https://githu
 
 # How to run locally:
 
-1. cd email_collector_streamlit/streamlit
-2. source env/bin/activate
-3. streamlit run streamlit.py
+1. Clone this repository
+`git clone https://github.com/anyataa/email_collector_streamlit.git`
+2. Change to the repository folder located in your local computer 
+`cd email_collector_streamlit/streamlit`
+3. Activate environment to run the project
+`source env/bin/activate`
+4. Run the project
+`streamlit run streamlit.py`
 
 # Features
 
