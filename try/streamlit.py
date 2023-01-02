@@ -22,7 +22,7 @@ def load_lottieurl(url: str):
 lottie_book = load_lottieurl("https://assets1.lottiefiles.com/packages/lf20_8vcvc00i.json")
 st_lottie(lottie_book, speed=1, height=200, key="initial")
 st.title("Email Report Data Visualization")
-st.subheader("Besco in the UK")
+st.subheader("GoodSale in the UK")
 ####################### END #########################
 #################### WEB HEADING #####################
 ######################################################
