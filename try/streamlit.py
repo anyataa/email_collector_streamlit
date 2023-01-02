@@ -10,10 +10,20 @@ import os
 from streamlit_lottie import st_lottie
 
 
+##################### NOTE ###########################
+#####  This Project can be accessed online here: #####
+### https://email-collector-goodsale.streamlit.app/ ##
+######################################################
+
 ######################################################
 #################### WEB HEADING #####################
 ######################################################
 def load_lottieurl(url: str):
+    '''
+    Action : List all the blobs in the bucket
+    Parameter: 
+    1. [string] online lottie file source
+    '''
     r = requests.get(url)
     if r.status_code != 200:
         return None
@@ -28,7 +38,7 @@ st.subheader("GoodSale in the UK")
 ######################################################
 
 
-######################################################
+##################### CONFIGURATION ##################
 ############# Google Cloud Storage (GCS) #############
 ######################################################
 # Notes: 
@@ -49,7 +59,7 @@ def list_blobs(bucket_name):
     """
     Action : List all the blobs in the bucket
     Parameter: 
-        1. bucker_name: Bucket name in GCP which files stored [string]
+    1. bucker_name: Bucket name in GCP which files stored [string]
     """
 
     # GCP - client.list_blobs : get all files inside the bucket
@@ -67,7 +77,10 @@ def list_blobs(bucket_name):
 ####################### SIDE BAR #####################
 ######################################################
 # Dropdown
-st.sidebar.title("Later")
+st.sidebar.title("GoodSale Interactive Dashboard")
+st.sidebar.subheader("This dashboard consist of 2 main features:")
+st.sidebar.subheader("1. Visualization")
+st.sidebar.subheader("2. Upload -> Convert -> Download")
 ####################### END #########################
 ####################### SIDE BAR #####################
 ######################################################
