@@ -101,8 +101,8 @@ def read_file(bucket_name, file_path):
         content = bucket.blob(file_path).download_as_string().decode("utf-8")
         string_format = StringIO(content)
         return string_format
-        
-st.title("1. Visualization and Download Report")
+
+st.title("Visualization and Download Report")
 # Function: Generate Table 
 def generate_table(df):
     st.write(df)
@@ -147,7 +147,7 @@ with row2_2:
 ######################################################
 #############  UPLOADER AND CONVERTER ################
 ######################################################
-st.title("2. Upload -> Convert -> Download")
+st.title("Upload -> Convert -> Download")
 def create_download_button(input_file, button_label):
     st.download_button(
             label=button_label,
