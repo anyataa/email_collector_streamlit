@@ -9,7 +9,7 @@ import requests
 import os
 from streamlit_lottie import st_lottie
 
-
+############ LAST COMMIT: 2 January 2023 ###############
 ##################### NOTE #############################
 #####  This Project can be accessed online here: #######
 ### https://email-collector-goodsale.streamlit.app/ ####
@@ -19,7 +19,7 @@ from streamlit_lottie import st_lottie
 ########################################################
 
 ######################################################
-#################### WEB HEADING #####################
+#################### ALL FUNCTION ####################
 ######################################################
 def load_lottieurl(url: str):
     '''
@@ -32,6 +32,72 @@ def load_lottieurl(url: str):
         return None
     return r.json()
 
+def create_download_button(input_file, button_label):
+    """
+    Action : Create download button
+    Parameter: 
+    1. input_file: [file in csv] file that users want to download
+    2. button_label: [string] button label
+    """
+    return st.download_button(
+            label=button_label,
+            data=input_file,
+            file_name='GoodSale/converted_df.csv',
+            mime='text/csv'
+        )
+
+def list_blobs(bucket_name):
+    """
+    Action : List all the blobs in the bucket
+    Parameter: 
+    1. bucker_name: Bucket name in GCP which files stored [string]
+    """
+
+    # GCP - client.list_blobs : get all files inside the bucket
+    blobs = client.list_blobs(bucket_name)
+
+    # The afforementioned function return 'Iterator'. Thus, we implement for loop to generate list to be consumed by st.selectbox
+    file_list = []
+    for blob in blobs:
+        file_list.append(blob.name)
+    
+    dataframe_file_list = pd.DataFrame(file_list, columns= ['file_name'])
+    return dataframe_file_list
+
+def generate_table(df):
+    """
+    Action : Generate table
+    Parameter: 
+    1. df: [csv format] data frame
+    """
+    st.write(df)
+    
+# GCP 
+# Uses st.experimental_memo to only rerun when the query changes or after 10 min.
+@st.experimental_memo(ttl=600)
+def read_file(bucket_name, file_path):
+    """
+    Action : Retrieve file from GCP
+    Parameter: 
+    1. bucket_name: [string] name of GCP bucket
+    2. file_path: [string] name of the file in GCP
+    """
+
+    bucket = client.bucket(bucket_name)
+    
+    # Convert data
+    file_ext = os.path.splitext(selected_file)[1]
+    if file_ext==".csv":
+        content = bucket.blob(file_path).download_as_string().decode("utf-8")
+        string_format = StringIO(content)
+        return string_format
+######################### END ########################
+#################### ALL FUNCTION ####################
+######################################################
+
+######################################################
+#################### WEB HEADING #####################
+######################################################
 lottie_book = load_lottieurl("https://assets1.lottiefiles.com/packages/lf20_8vcvc00i.json")
 st_lottie(lottie_book, speed=1, height=200, key="initial")
 st.title("Email Report Data Visualization")
@@ -58,23 +124,6 @@ bucket_name = "db_email_reports_anya"
 ############# Google Cloud Storage (GCS) #############
 ######################################################
 
-def list_blobs(bucket_name):
-    """
-    Action : List all the blobs in the bucket
-    Parameter: 
-    1. bucker_name: Bucket name in GCP which files stored [string]
-    """
-
-    # GCP - client.list_blobs : get all files inside the bucket
-    blobs = client.list_blobs(bucket_name)
-
-    # The afforementioned function return 'Iterator'. Thus, we implement for loop to generate list to be consumed by st.selectbox
-    file_list = []
-    for blob in blobs:
-        file_list.append(blob.name)
-    
-    dataframe_file_list = pd.DataFrame(file_list, columns= ['file_name'])
-    return dataframe_file_list
 
 ######################################################
 ####################### SIDE BAR #####################
@@ -92,52 +141,31 @@ st.sidebar.subheader("2. Upload -> Convert -> Download")
 ################## VISUALIZATION #####################
 ######################################################
 
-# GCP 
-# Uses st.experimental_memo to only rerun when the query changes or after 10 min.
-@st.experimental_memo(ttl=600)
-def read_file(bucket_name, file_path):
-    """
-    Action : Retrieve file from GCP
-    Parameter: 
-    1. bucket_name: [string] name of GCP bucket
-    2. file_path: [string] name of the file in GCP
-    """
-
-    bucket = client.bucket(bucket_name)
-    
-    # Convert data
-    file_ext = os.path.splitext(selected_file)[1]
-    if file_ext==".csv":
-        content = bucket.blob(file_path).download_as_string().decode("utf-8")
-        string_format = StringIO(content)
-        return string_format
-
 st.title("Visualization and Download Report")
 
-def generate_table(df):
-    """
-    Action : Generate table
-    Parameter: 
-    1. df: [csv format] data frame
-    """
-
-    st.write(df)
 files_gcs = list_blobs(bucket_name=bucket_name)
 selected_file = st.selectbox(
      "Choose report to analyze and visualize",
      (files_gcs)
      )
 content = read_file(bucket_name, selected_file)
-df = pd.read_csv(content, sep=",")
+df = pd.read_csv(content)
 
 row1_1, row1_2 = st.columns(2, gap="large")
 with row1_1:
+    create_download_button(df.to_csv(
+                            index=None,
+                            header=True), "Download SKU overview")
     st.subheader("Data SKU overview")
     generate_table(df)
 
+
 with row1_2:
-    st.subheader("SKU quantity-related data")
     quantity_data = df[["Stock", "Loss", "Return"]]
+    create_download_button(quantity_data.to_csv(
+                            index=None,
+                            header=True), "Download quantity data")
+    st.subheader("Quantity Visualization")
     st.bar_chart(quantity_data)
 
 row2_1, row2_2 = st.columns(2, gap="large")
@@ -164,17 +192,6 @@ with row2_2:
 #############  UPLOADER AND CONVERTER ################
 ######################################################
 st.title("Upload -> Convert -> Download")
-def create_download_button(input_file, button_label):
-    '''
-    
-    '''
-    st.download_button(
-            label=button_label,
-            data=input_file,
-            file_name='GoodSale/converted_df.csv',
-            mime='text/csv'
-        )
-
 uploaded_file = st.file_uploader("Choose a file")
 
 if uploaded_file is not None:
