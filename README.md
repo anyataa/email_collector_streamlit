@@ -48,17 +48,17 @@ This features aimed for database admin to ease the process of saving the data to
 ## Getting Started
 
 # Repository and File Description
-### [folder](https://github.com/anyataa/email_collector_streamlit/tree/main/data) data
+### [folder](https://github.com/anyataa/email_collector_streamlit/tree/main/data) data: 
 mock data for testing purpose
-### [folder](https://github.com/anyataa/email_collector_streamlit/tree/main/streamlit) streamlit
+### [folder](https://github.com/anyataa/email_collector_streamlit/tree/main/streamlit) streamlit: 
 main folder for files related to streamlit
-* [folder](https://github.com/anyataa/email_collector_streamlit/tree/main/streamlit/env) env
+* [folder](https://github.com/anyataa/email_collector_streamlit/tree/main/streamlit/env) env: 
 Python environment contains list of packages and modules used for this application development
-* [file](https://github.com/anyataa/email_collector_streamlit/blob/main/streamlit/requirements.txt) requirements.txt 
+* [file](https://github.com/anyataa/email_collector_streamlit/blob/main/streamlit/requirements.txt) requirements.txt: 
 this file contains list of modules required modules that needs to be installed by Streamlit deployment pipeline
-* [file](https://github.com/anyataa/email_collector_streamlit/blob/main/streamlit/streamlit.py) streamlit.py
+* [file](https://github.com/anyataa/email_collector_streamlit/blob/main/streamlit/streamlit.py) streamlit.py: 
 main file where all codes exist from upload mechanism to visualization. More details regarding the code structure explained in comment-mechanism inside the file
-*[file](https://github.com/anyataa/email_collector_streamlit/blob/main/.gitignore) .gitignore
+*[file](https://github.com/anyataa/email_collector_streamlit/blob/main/.gitignore) .gitignore: 
 prevent file that contains data-sensitive information being pushed to github. In this case, .toml file contains GCP credential access
 
 
