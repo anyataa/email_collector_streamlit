@@ -168,6 +168,10 @@ with row1_2:
     st.subheader("Quantity Visualization")
     st.bar_chart(quantity_data)
 
+    #category data for transaction visualization
+    category_data = df[["category"]]
+    st.bar_chart(category_data)
+
 row2_1, row2_2 = st.columns(2, gap="large")
 with row2_1:
     st.subheader("Total Revenue per SKU")
