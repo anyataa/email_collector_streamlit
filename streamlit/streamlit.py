@@ -161,16 +161,18 @@ with row1_1:
 
 
 with row1_2:
-    quantity_data = df[["Stock", "Loss", "Return"]]
-    create_download_button(quantity_data.to_csv(
-                            index=None,
-                            header=True), "Download quantity data")
-    st.subheader("Quantity Visualization")
-    st.bar_chart(quantity_data)
+    if "Stock" in df:
+        quantity_data = df[["Stock", "Loss", "Return"]]
+        create_download_button(quantity_data.to_csv(
+                              index=None,
+                               header=True), "Download quantity data")
+        st.subheader("Quantity Visualization")
+        st.bar_chart(quantity_data)
 
     #category data for transaction visualization
-    category_data = df[["category"]]
-    st.bar_chart(category_data)
+    if "category" in df:
+        category_data = df[["category"]]
+        st.bar_chart(category_data)
 
 row2_1, row2_2 = st.columns(2, gap="large")
 with row2_1:
